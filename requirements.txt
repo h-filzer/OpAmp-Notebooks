@@ -1,0 +1,9 @@
+dill==0.3.6
+import-ipynb==0.1.4
+jupyter-contrib-nbextensions==0.5.1
+jupyterlab==3.5.0
+notebook==6.5.2
+numpy==1.23.4
+PySpice==1.5
+scipy==1.9.3
+sympy==1.11.1
