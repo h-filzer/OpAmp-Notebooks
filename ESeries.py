@@ -96,16 +96,9 @@ class ESeries:
         # (ratio_series[0][1][0], ratio_series[0][1][1], ratio_series[0])
         return ratio_series
 
-    def voltage_divider(self, vin: float, vout: float, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True):
-        ratio = abs(vout/vin)
-        if ratio <= 1/100:
-            print("Ratio too high, resistor vales might not provide expected outcome")
-        pairs = self.__resolve_resistor_pair(ratio=ratio, scale=scale,
-                                             calculation=self.__voltage_divider_ratio, series=series, include_e24=include_e24)
-
-        return pairs[0]
-
-    def voltage_divider(self, ratio: float, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True):
+    def voltage_divider(self, vin: float, vout: float,  ratio: float = None, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True):
+        if ratio == None:
+            ratio = abs(vout/vin)
         if ratio <= 1/100:
             print("Ratio too high, resistor vales might not provide expected outcome")
         pairs = self.__resolve_resistor_pair(ratio=ratio, scale=scale,
