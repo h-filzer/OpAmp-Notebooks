@@ -86,8 +86,8 @@ class ESeries:
                 ratio_difference = abs(ratio - current_r_ratio)
                 ratio_series.append(
                     {
-                        "r1": series_element * pow(10, multiplier),
-                        "r2": series_element_fraction * pow(10, multiplier),
+                        "r2": series_element * pow(10, multiplier),
+                        "r1": series_element_fraction * pow(10, multiplier),
                         "ratio_difference": ratio_difference,
                     }
                 )
@@ -105,15 +105,23 @@ class ESeries:
 
         return pairs[0]
 
-    def calculate_gain_resistors(self, gain: float, rf_min: float = 100000, series: Series = Series.E96, include_e24: bool = True):
+    def voltage_divider(self, ratio: float, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True):
+        if ratio <= 1/100:
+            print("Ratio too high, resistor vales might not provide expected outcome")
+        pairs = self.__resolve_resistor_pair(ratio=ratio, scale=scale,
+                                             calculation=self.__voltage_divider_ratio, series=series, include_e24=include_e24)
+
+        return pairs[0]
+
+    def inverting_gain_resistors(self, gain: float, rf_min: float = 100000, series: Series = Series.E96, include_e24: bool = True):
         pairs = self.__resolve_resistor_pair(ratio=abs(gain), scale=rf_min,
                                              calculation=self.__gain_ratio, series=series, include_e24=include_e24)
         pairs = list(
-            filter(lambda x: x['r2'] >= rf_min, pairs))[:3]
+            filter(lambda x: x['r2'] >= rf_min, pairs))
         pairs.sort(key=lambda a: a['r2'])
         chosen_divider = pairs[0]
-        chosen_divider['rf'] = chosen_divider.pop('r2')
-        chosen_divider['rg'] = chosen_divider.pop('r1')
+        chosen_divider['rf'] = chosen_divider.pop('r1')
+        chosen_divider['rg'] = chosen_divider.pop('r2')
         return chosen_divider
 
 
