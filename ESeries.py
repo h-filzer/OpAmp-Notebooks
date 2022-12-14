@@ -86,32 +86,38 @@ class ESeries:
                 ratio_difference = abs(ratio - current_r_ratio)
                 ratio_series.append(
                     {
-                        "r2": series_element * pow(10, multiplier),
                         "r1": series_element_fraction * pow(10, multiplier),
+                        "r2": series_element * pow(10, multiplier),
                         "ratio_difference": ratio_difference,
                     }
                 )
-        ratio_series.sort(key=lambda a: a['ratio_difference'])
+        ratio_series.sort(key=lambda a: (a['ratio_difference'], a['r1']))
         # print(ratio_series[:100])
         # (ratio_series[0][1][0], ratio_series[0][1][1], ratio_series[0])
         return ratio_series
 
-    def voltage_divider(self, vin: float, vout: float,  ratio: float = None, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True):
+    def voltage_divider(self, vin: float = None, vout: float = None,  ratio: float = None, scale: float = 10000, series: Series = Series.E96, include_e24: bool = True, r1_min: float = 100000):
         if ratio == None:
             ratio = abs(vout/vin)
         if ratio <= 1/100:
             print("Ratio too high, resistor vales might not provide expected outcome")
+        if r1_min != None:
+            scale = r1_min
         pairs = self.__resolve_resistor_pair(ratio=ratio, scale=scale,
                                              calculation=self.__voltage_divider_ratio, series=series, include_e24=include_e24)
 
+        pairs = list(
+            filter(lambda x: x['r1'] >= r1_min, pairs))
+        #pairs.sort(key=lambda a: a['r1'])
+        print(pairs[:5])
         return pairs[0]
 
     def inverting_gain_resistors(self, gain: float, rf_min: float = 100000, series: Series = Series.E96, include_e24: bool = True):
         pairs = self.__resolve_resistor_pair(ratio=abs(gain), scale=rf_min,
                                              calculation=self.__gain_ratio, series=series, include_e24=include_e24)
         pairs = list(
-            filter(lambda x: x['r2'] >= rf_min, pairs))
-        pairs.sort(key=lambda a: a['r2'])
+            filter(lambda x: x['r1'] >= rf_min, pairs))
+        pairs.sort(key=lambda a: a['r1'])
         chosen_divider = pairs[0]
         chosen_divider['rf'] = chosen_divider.pop('r1')
         chosen_divider['rg'] = chosen_divider.pop('r2')
