@@ -24,7 +24,7 @@ class ESeries:
         series_element / (series_element_fraction+series_element))
 
     def __gain_ratio(self, series_element_fraction, series_element): return (
-        series_element_fraction / series_element)
+        series_element / series_element_fraction)
 
     def __calculate_series(self, series: Series, include_e24: bool = False):
         if series == ESeries.Series.E24:
@@ -117,17 +117,20 @@ class ESeries:
                                              calculation=self.__gain_ratio, series=series, include_e24=include_e24)
         pairs = list(
             filter(lambda x: x['r1'] >= rf_min, pairs))
-        pairs.sort(key=lambda a: a['r1'])
+        #pairs.sort(key=lambda a: a['r1'])
+        pairs.sort(key=lambda a: (a['ratio_difference'], a['r1']))
+        print(pairs[:5])
         chosen_divider = pairs[0]
-        chosen_divider['rf'] = chosen_divider.pop('r1')
-        chosen_divider['rg'] = chosen_divider.pop('r2')
+        chosen_divider['rf'] = chosen_divider.pop('r2')
+        chosen_divider['rg'] = chosen_divider.pop('r1')
         return chosen_divider
 
 
 if __name__ == '__main__':
     x = ESeries()
-    #print(x.voltage_divider(vin=10, vout=.101, series=ESeries.Series.E24))
-   # print(x.calculate_gain_resistors(gain=-10/9, rf_min=40000, series=ESeries.Series.E24))
+    #print(x.voltage_divider(vin=12, vout=5, series=ESeries.Series.E24))
+    #print(x.inverting_gain_resistors(gain=0.37698,
+    #      rf_min=6e3, series=ESeries.Series.E24))
 
     # print(x.calculate_series(ESeries.Series.E96))
     # start = time.time()

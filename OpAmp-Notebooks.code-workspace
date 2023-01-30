@@ -1,0 +1,14 @@
+{
+  "folders": [
+	{
+		"path": "."
+	},
+	{
+		"path": "../3340-VCO"
+	},
+	{
+		"path": "../kicad-library/footprints.pretty"
+	}
+],
+  "settings": {}
+}
