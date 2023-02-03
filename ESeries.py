@@ -128,8 +128,8 @@ class ESeries:
 
 if __name__ == '__main__':
     x = ESeries()
-    #print(x.voltage_divider(vin=12, vout=5, series=ESeries.Series.E24))
-    #print(x.inverting_gain_resistors(gain=0.37698,
+    print(x.voltage_divider(vin=12, vout=5, series=ESeries.Series.E24))
+    # print(x.inverting_gain_resistors(gain=0.37698,
     #      rf_min=6e3, series=ESeries.Series.E24))
 
     # print(x.calculate_series(ESeries.Series.E96))
